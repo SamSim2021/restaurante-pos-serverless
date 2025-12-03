@@ -1,0 +1,38 @@
+# backend/template.yaml
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Backend del Sistema POS Serverless del Restaurante.
+
+Globals:
+  Function:
+    Timeout: 3 # Tiempo de espera máximo de la Lambda en segundos (suficiente para una lectura rápida)
+    MemorySize: 128 # Memoria asignada (mínimo, para reducir costos)
+
+Resources:
+  # 1. Definición de la Función Lambda
+  MenuReaderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: menu_reader/ # Ubicación de tu código Python (la carpeta)
+      Handler: app.lambda_handler # El archivo (app.py) y la función (lambda_handler) que debe ejecutar
+      Runtime: python3.11 # La versión de Python que usas
+      
+      # PERMISOS: La función necesita leer DynamoDB
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: RestauranteMenu # ¡Debe coincidir con el nombre exacto de tu tabla!
+
+      # 2. Conexión con API Gateway
+      Events:
+        MenuAPI:
+          Type: Api
+          Properties:
+            Path: /menu # La ruta final del endpoint (GET /menu)
+            Method: GET
+
+Outputs:
+  MenuApiUrl:
+    Description: "URL de API Gateway para el endpoint /menu"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/menu/"
