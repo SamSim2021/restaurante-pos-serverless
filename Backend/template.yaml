@@ -17,7 +17,7 @@ Resources:
     Properties:
       CodeUri: menu_reader/ # Ubicación de tu código Python (la carpeta)
       Handler: app.lambda_handler # El archivo (app.py) y la función (lambda_handler) que debe ejecutar
-      Runtime: python3.11 # La versión de Python que usas
+      Runtime: python3.13 # La versión de Python que usas
       
       # PERMISOS: La función necesita leer DynamoDB
       Policies:
